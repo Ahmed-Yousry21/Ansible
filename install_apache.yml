@@ -1,15 +1,24 @@
 ---
-
 - hosts: all
   become: true
   tasks:
  
-  - name: update repository	
+  - name: install apache2
     apt:
+      name:
+        - "{{ apache_package }}"
+        - "{{ php }}"
+      state: latest
       update_cache: yes
-
+    when: ansible_distribution == "Ubuntu"
 
 
   - name: install apache2
-    apt:
-      name: apache2
+    dnf:
+      name:
+        - "{{ apache_package }}"
+        - "{{ php }}"
+      state: latest
+      update_cache: yes
+    when: ansible_distribution == "CentOS"
+
