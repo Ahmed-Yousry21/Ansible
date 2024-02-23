@@ -1,0 +1,69 @@
+---
+- hosts: all
+  become: true
+  pre_tasks:
+
+  - name: install update COS
+    tags: always
+    dnf:
+      update_only: yes
+      update_cache: yes
+    when: ansible_distribution == "CentOS"
+
+  - name: install update UbU
+    tags: always
+    apt:
+      upgrade: dist
+      update_cache: yes
+    when: ansible_distribution == "Ubuntu"
+
+- hosts: web_servers
+  become: true
+  tasks:
+
+ 
+  - name: install apache2 UbU
+    tags: apache2,ubuntu,php
+    apt:
+      name:
+        - samba
+        - "{{ apache_package }}"
+        - "{{ php }}"
+      state: latest
+      update_cache: yes
+    when: ansible_distribution == "Ubuntu"
+
+
+  - name: install apache2 Cos
+    tags: apache2,centos,php
+    dnf:
+      name:
+        - samba
+        - "{{ apache_package }}"
+        - "{{ php }}"
+      state: latest
+      update_cache: yes
+    when: ansible_distribution == "CentOS"
+
+- hosts: load_balancer
+  become: true
+  tasks:
+
+
+  - name: install Mariadb UbU
+    tags: mariadb,ubuntu,lbalancer
+    apt:
+      name:
+        - mariadb-server
+      state: latest
+      update_cache: yes
+    when: ansible_distribution == "Ubuntu"
+
+  - name: install Mariadb Cos
+    tags: apache2,centos,php
+    dnf:
+      name:
+        - mariadb
+      state: latest
+      update_cache: yes
+    when: ansible_distribution == "CentOS"
