@@ -13,6 +13,7 @@
   - name: install update UbU
     tags: always
     apt:
+      clean: true
       upgrade: dist
       update_cache: yes
     when: ansible_distribution == "Ubuntu"
@@ -44,6 +45,19 @@
       state: latest
       update_cache: yes
     when: ansible_distribution == "CentOS"
+
+  - name: copy default html
+    tags: apache2,httpd
+    copy:
+      src: default_site.html
+      dest: /var/www/html/index.html
+      owner: root
+      group: root
+      mode: 0644
+
+
+
+
 
 - hosts: load_balancer
   become: true
